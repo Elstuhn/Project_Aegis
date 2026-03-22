@@ -36,3 +36,7 @@ npm run dev
 | ES  | ~120k  | 68% |
 
 All using default parameters (not reflecting highest PK gotten, just rough estimates)
+
+<img width="1861" height="963" alt="image" src="https://github.com/user-attachments/assets/98b46cfb-9259-4d77-90ea-429acc602025" />
+
+
