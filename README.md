@@ -6,7 +6,7 @@ Intercontinental ballistic missile interception simulation platform
 2. Evolution Algorithm (OpenAI Evolution Strategies)
 3. PPO
 
-Optimized C++ runtime for training (146,000+ training episodes in 5 seconds from ES)
+Optimized C++ runtime for training (7k training episodes in 10s)
 
 ### How to run:
 1. Compile engine:
@@ -27,3 +27,12 @@ npm run install
 npm run dev
 ```
 
+### Stats
+
+| Method | Episodes | PK |
+| -------- | -------- | -------- | 
+| GRPO  | ~500m  | 25% | 
+| PPO  | ~70k  | 94% |
+| ES  | ~120k  | 68% |
+
+All using default parameters (not reflecting highest PK gotten, just rough estimates)
