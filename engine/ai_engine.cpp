@@ -625,17 +625,23 @@ struct PPOOptimizer {
             vector<double> values(T+1, 0.0);
             for(int t=0; t<T; t++) values[t] = forwardCritic(r.states[t]);
             
-            double ret = r.reward; // Episodic reward only at the end
-            vector<double> advs(T);
+            double ret = r.reward; 
+            double lastV = 0.0;
+            double lastAdv = 0.0;
+            double lam = 0.95;
             for(int t=T-1; t>=0; t--) {
-                double targetV = (t == T-1) ? ret : values[t+1] * gamma;
-                advs[t] = targetV - values[t];
+                double r_t = (t == T-1) ? ret : 0.0;
+                double delta = r_t + gamma * lastV - values[t];
+                double adv = delta + gamma * lam * lastAdv;
                 
                 allStates.push_back(r.states[t]);
                 allActions.push_back(r.actions[t]);
                 allOldMeans.push_back(r.means[t]);
-                allAdvs.push_back(advs[t]);
-                allReturns.push_back(targetV);
+                allAdvs.push_back(adv);
+                allReturns.push_back(adv + values[t]);
+                
+                lastV = values[t];
+                lastAdv = adv;
             }
         }
 
@@ -647,6 +653,15 @@ struct PPOOptimizer {
 
         int N = allStates.size();
         for(int epoch=0; epoch<ppoEpochs; epoch++) {
+            // Batch Gradients
+            vector<vector<double>> dW1_a(hidD, vector<double>(inD, 0.0));
+            vector<vector<double>> dW2_a(actD, vector<double>(hidD, 0.0));
+            vector<double> db1_a(hidD, 0.0), db2_a(actD, 0.0);
+            
+            vector<vector<double>> dW1_c(hidD, vector<double>(inD, 0.0));
+            vector<vector<double>> dW2_c(1, vector<double>(hidD, 0.0));
+            vector<double> db1_c(hidD, 0.0), db2_c(1, 0.0);
+
             for(int i=0; i<N; i++) {
                 vector<double> state = allStates[i];
                 vector<double> a1, mean;
@@ -678,17 +693,17 @@ struct PPOOptimizer {
                 
                 vector<double> dZ1(hidD, 0.0);
                 for(int d=0; d<actD; d++) {
-                    b2_a[d] += lr * dZ2[d];
+                    db2_a[d] += dZ2[d];
                     for(int h=0; h<hidD; h++) {
-                        W2_a[d][h] += lr * dZ2[d] * a1[h];
-                        dZ1[h] += W2_a[d][h] * dZ2[d]; 
+                        dZ1[h] += W2_a[d][h] * dZ2[d]; // backward pass FIRST
+                        dW2_a[d][h] += dZ2[d] * a1[h]; // then compute grad
                     }
                 }
                 for(int h=0; h<hidD; h++) {
                     dZ1[h] = (a1[h] > 0) ? dZ1[h] : 0.0; 
-                    b1_a[h] += lr * dZ1[h];
+                    db1_a[h] += dZ1[h];
                     for(int f=0; f<inD; f++) {
-                        W1_a[h][f] += lr * dZ1[h] * state[f];
+                        dW1_a[h][f] += dZ1[h] * state[f];
                     }
                 }
 
@@ -704,18 +719,34 @@ struct PPOOptimizer {
                 double td_err = allReturns[i] - v; 
                 double c_dZ2 = td_err;
                 vector<double> c_dZ1(hidD, 0.0);
-                b2_c[0] += lr * c_dZ2;
+                db2_c[0] += c_dZ2;
                 for(int h=0; h<hidD; h++) {
-                    W2_c[0][h] += lr * c_dZ2 * c_a1[h];
                     c_dZ1[h] += W2_c[0][h] * c_dZ2;
+                    dW2_c[0][h] += c_dZ2 * c_a1[h];
                 }
                 for(int h=0; h<hidD; h++) {
                     c_dZ1[h] = (c_a1[h] > 0) ? c_dZ1[h] : 0.0;
-                    b1_c[h] += lr * c_dZ1[h];
+                    db1_c[h] += c_dZ1[h];
                     for(int f=0; f<inD; f++) {
-                        W1_c[h][f] += lr * c_dZ1[h] * state[f];
+                        dW1_c[h][f] += c_dZ1[h] * state[f];
                     }
                 }
+            }
+
+            double scale = lr / N;
+            for(int d=0; d<actD; d++) {
+                b2_a[d] += scale * db2_a[d];
+                for(int h=0; h<hidD; h++) W2_a[d][h] += scale * dW2_a[d][h];
+            }
+            for(int h=0; h<hidD; h++) {
+                b1_a[h] += scale * db1_a[h];
+                for(int f=0; f<inD; f++) W1_a[h][f] += scale * dW1_a[h][f];
+            }
+            b2_c[0] += scale * db2_c[0];
+            for(int h=0; h<hidD; h++) W2_c[0][h] += scale * dW2_c[0][h];
+            for(int h=0; h<hidD; h++) {
+                b1_c[h] += scale * db1_c[h];
+                for(int f=0; f<inD; f++) W1_c[h][f] += scale * dW1_c[h][f];
             }
         }
 

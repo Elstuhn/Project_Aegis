@@ -170,7 +170,7 @@ export default function AegisBMD() {
     ctx.fillStyle = "rgba(30,180,100,0.1)"; ctx.fill();
     ctx.fillStyle = "rgba(0,255,80,0.8)";
     ctx.font = "bold 9px 'Courier New', monospace";
-    ctx.fillText("EI SENTINEL GBI", rc.x - 24, groundY + 16);
+    ctx.fillText("EI Radar HQ", rc.x - 24, groundY + 16);
 
     if (playData) {
       const { traj, trail, startIdx } = playData;
