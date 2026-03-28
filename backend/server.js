@@ -4,7 +4,7 @@ const path = require('path');
 const readline = require('readline');
 
 const wss = new WebSocketServer({ port: 8000 });
-console.log('Aegis BMD Backend running on ws://localhost:8000');
+console.log('Aegis BMD Backend running on ws://0.0.0.0:8000');
 
 const enginePath = path.join(__dirname, '../engine/ai_engine');
 let engine;

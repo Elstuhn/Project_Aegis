@@ -40,7 +40,7 @@ export default function AegisBMD() {
   const optParams = { algo, randomize, groupSize, clipRatio, klCoeff, lr: grpoLr, sigma: clipRatio };
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8000");
+    const ws = new WebSocket("ws://0.0.0.0:8000");
     ws.onopen = () => setWsConnected(true);
     ws.onclose = () => setWsConnected(false);
     ws.onmessage = (e) => {
