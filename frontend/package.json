@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prod": "concurrently 'vite serve' 'cd ../backend && node server.js'"
+    "prod": "concurrently 'vite serve' 'cd ../backend && node server.js'",
+    "run": "concurrently 'vite serve' 'cd ../backend && node server.js'"
   },
   "dependencies": {
     "concurrently": "^9.2.1",
