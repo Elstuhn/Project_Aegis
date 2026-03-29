@@ -16,6 +16,10 @@ COPY engine/ ./engine/
 
 RUN cd engine && rm -f ai_engine && g++ -O3 ai_engine.cpp -o ai_engine
 RUN chmod +x /app/engine/ai_engine
+
+ARG VITE_WS_URL
+ENV VITE_WS_URL=$VITE_WS_URL
+
 RUN cd frontend && npm run build
 
 EXPOSE 8000 5173

@@ -2,6 +2,8 @@ app = 'project-aegis'
 primary_region = 'sin'
 
 [build]
+  [build.args]
+    VITE_WS_URL = "wss://project-aegis.fly.dev:8000"
 
 [[services]]
   internal_port = 5173
