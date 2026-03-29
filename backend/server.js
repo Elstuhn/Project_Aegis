@@ -15,7 +15,7 @@ const verifyClient = isProd
   ? ({ origin }) => origin === frontendUrl
   : undefined;
 
-const wss = new WebSocketServer({ port: 8000, verifyClient });
+const wss = new WebSocketServer({ host: '0.0.0.0', port: 8000, verifyClient });
 console.log(`Aegis BMD Backend running on ws://localhost:8000 [${isProd ? 'production' : 'local'}]`);
 
 const enginePath = path.join(__dirname, '../engine/ai_engine');

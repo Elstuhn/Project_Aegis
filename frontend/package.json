@@ -8,8 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prod": "concurrently 'vite serve --host 0.0.0.0' 'cd ../backend && node server.js'",
-    "run": "concurrently 'vite serve --host 0.0.0.0' 'cd ../backend && node server.js'"
+    "prod": "concurrently 'vite preview --host 0.0.0.0 --port 5173' 'cd ../backend && node server.js'",
+    "run": "concurrently 'vite preview --host 0.0.0.0 --port 5173' 'cd ../backend && node server.js'"
   },
   "dependencies": {
     "concurrently": "^9.2.1",
