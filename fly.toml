@@ -21,3 +21,18 @@ primary_region = 'sin'
   cpu_kind = 'shared'
   cpus = 1
   memory_mb = 256
+
+[services]
+  internal_port = 5173
+
+[[services.ports]]
+  port = 443
+  handlers = ["tls", "http"]
+
+[[services]]
+  internal_port = 8000
+  protocol = "tcp"
+
+[[services.ports]]
+  port = 8000
+  handlers = ["tls"]
