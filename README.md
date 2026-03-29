@@ -1,5 +1,7 @@
-# AEGIS BMD
+# AEGIS BMD ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m802719647-ccb46756ad14c0b3c3b2f56d)
 Intercontinental ballistic missile interception simulation platform
+
+https://project-aegis-y--m3g.fly.dev/
 
 ### Interceptor Missile Training Methods
 1. GRPO
