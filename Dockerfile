@@ -12,7 +12,7 @@ COPY backend/ ./backend/
 COPY frontend/ ./frontend/
 COPY engine/ ./engine/
 
-RUN cd engine && rm -f ai_engine && g++ -O3 ai_engine.cpp -o ai_engine
+RUN cd engine && rm -f ai_engine && gcc -o ai_engine ai_engine.c -lm
 RUN chmod +x /app/engine/ai_engine
 RUN cd frontend && npm run build
 
