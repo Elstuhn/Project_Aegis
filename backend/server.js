@@ -3,8 +3,20 @@ const { spawn } = require('child_process');
 const path = require('path');
 const readline = require('readline');
 
-const wss = new WebSocketServer({ port: 8000 });
-console.log('Aegis BMD Backend running on ws://localhost:8000');
+const isProd = process.env.NODE_ENV === 'production';
+const frontendUrl = process.env.FRONTEND_URL;
+
+if (isProd && !frontendUrl) {
+  console.error('FRONTEND_URL must be set in production.');
+  process.exit(1);
+}
+
+const verifyClient = isProd
+  ? ({ origin }) => origin === frontendUrl
+  : undefined;
+
+const wss = new WebSocketServer({ port: 8000, verifyClient });
+console.log(`Aegis BMD Backend running on ws://localhost:8000 [${isProd ? 'production' : 'local'}]`);
 
 const enginePath = path.join(__dirname, '../engine/ai_engine');
 let engine;
